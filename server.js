@@ -70,7 +70,7 @@ app.delete('/todos/delete/:id', function(req, res){
 	  var matchedTodo = _.findWhere(todos, {id: idTodo});
 
  		console.log(matchedTodo + ' ');	 
- 		
+
 	   if(matchedTodo === null){
 	  	 res.status(404).send();
 	  	 return;
@@ -83,6 +83,37 @@ app.delete('/todos/delete/:id', function(req, res){
 	  console.log(todos + ' ');	 
 
 	  res.send(matchedTodo);
+
+});
+
+app.put('/todos/:id', function(req, res){
+	
+	var idTodo = parseInt(req.params.id, 10);
+	var matchedTodo = _.findWhere(todos, {id: idTodo});
+	var body = _.pick(req.body, 'description', 'completed');
+	var validAttribute = {};
+
+	if(matchedTodo === null){
+	  	 res.status(404).send();
+	  	 return;
+	}
+
+	if(body.hasOwnProperty('completed') && _.isBoolean(body.completed)){
+		validAttribute.completed = body.completed;
+	}else if(body.hasOwnProperty('completed')){
+		return res.status(400).send();
+	}else if(body.hasOwnProperty('description') && 
+				_.isString(body.description)  &&
+				body.description.trim().length > 0){
+		validAttribute.description = body.description;
+
+	}else if(body.hasOwnProperty('description')){
+		return res.status(400).send();
+	}
+
+	_.extend(matchedTodo, validAttribute);
+
+	res.json(matchedTodo);
 
 });
 
