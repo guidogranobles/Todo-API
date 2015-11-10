@@ -33,7 +33,16 @@ app.get('/todos', function(req, res){
 	   	   filteredTodos = _.where(todos, {completed: true});
 	   }else if(queryParams.completed && queryParams.completed === 'false'){
 	   		filteredTodos = _.where(todos, {completed: false});
+	   } 
+
+	   if(queryParams.q && queryParams.q.trim().length > 0 ){
+	   	   filteredTodos = _.filter(filteredTodos, function(todo){
+
+	   	   		return (todo.description.indexOf(queryParams.q ) > -1);
+
+	   	   });
 	   } 	  
+	  
 
 	  res.send(filteredTodos);
 
