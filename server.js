@@ -58,16 +58,23 @@ app.get('/todos', function(req, res) {
 app.get('/todos/:id', function(req, res) {
 
 	var idTodo = parseInt(req.params.id, 10);
-	var matchedTodo = _.findWhere(todos, {
-		id: idTodo
-	});
-	console.log(matchedTodo + ' ');
-	if (matchedTodo === null) {
-		res.status(404).send();
-		return;
-	}
 
-	res.send(matchedTodo);
+	 db.todo.findById(idTodo).then(function(todoFound){
+		res.json(todoFound.toJSON());
+	}).catch(function(e){
+		res.status(404).send('Not record matching found');
+	});
+
+	// var matchedTodo = _.findWhere(todos, {
+	// 	id: idTodo
+	// });
+	// console.log(matchedTodo + ' ');
+	// if (matchedTodo === null) {
+	// 	res.status(404).send();
+	// 	return;
+	// }
+
+	// res.send(matchedTodo);
 
 });
 
