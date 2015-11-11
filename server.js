@@ -27,25 +27,29 @@ app.get('/', function(req, res) {
 //Get /todos filtered
 app.get('/todos', function(req, res) {
 
-	 var queryParams = req.query;
-	 var where = {};
+	var queryParams = req.query;
+	var where = {};
 
-	 if (queryParams.hasOwnProperty('completed') &&  queryParams.completed === 'true' ){
+	if (queryParams.hasOwnProperty('completed') && queryParams.completed === 'true') {
 
-	 	where.completed = true;
-	 }else if(queryParams.hasOwnProperty('completed') &&  queryParams.completed === 'false' ){
-	 		where.completed = false;
-	 }
+		where.completed = true;
+	} else if (queryParams.hasOwnProperty('completed') && queryParams.completed === 'false') {
+		where.completed = false;
+	}
 
-	 if (queryParams.q){
-	 	where.description = {$like: '%'+queryParams.q+'%'};
-	 }
-		console.log(where);
-	
-	db.todo.findAll({where}).then(function(todos){
+	if (queryParams.hasOwnProperty('q') && queryParams.q.length > 0) {
+		where.description = {
+			$like: '%' + queryParams.q + '%'
+		};
+	}
+	console.log(where);
+
+	db.todo.findAll({
+		where
+	}).then(function(todos) {
 		res.json(todos);
-	}).catch(function(e){
-		
+	}).catch(function(e) {
+
 		res.status(500).send(e);
 	});
 
@@ -58,9 +62,9 @@ app.get('/todos/:id', function(req, res) {
 
 	var idTodo = parseInt(req.params.id, 10);
 
-	 db.todo.findById(idTodo).then(function(todoFound){
+	db.todo.findById(idTodo).then(function(todoFound) {
 		res.json(todoFound.toJSON());
-	}).catch(function(e){
+	}).catch(function(e) {
 		res.status(404).send('Not record matching found');
 	});
 
@@ -73,11 +77,11 @@ app.post('/todos', function(req, res) {
 	var body = _.pick(req.body, 'description', 'completed');
 
 
-	 db.todo.create(body).then(function(newTodo){
-			res.json(newTodo.toJSON());	 	
-	 }).catch(function(e){
-	 		res.status(400).json(e);
-	 });
+	db.todo.create(body).then(function(newTodo) {
+		res.json(newTodo.toJSON());
+	}).catch(function(e) {
+		res.status(400).json(e);
+	});
 
 
 });
