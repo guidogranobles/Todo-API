@@ -90,24 +90,21 @@ app.post('/todos', function(req, res) {
 app.delete('/todos/delete/:id', function(req, res) {
 
 	var idTodo = parseInt(req.params.id, 10);
-	var matchedTodo = _.findWhere(todos, {
-		id: idTodo
+
+	db.todo.destroy({
+		where: {
+
+			id: idTodo
+		}
+	}).then(function(rowsDelete){
+		if(rowsDelete > 0){
+			res.send('Rows deleted successfully: ' + rowsDelete);
+		}else{
+			res.status(204).send('Not record matching found');
+		}
+	}).catch(function(e){
+		res.status(500).json(e);
 	});
-
-	console.log(matchedTodo + ' ');
-
-	if (matchedTodo === null) {
-		res.status(404).send();
-		return;
-	}
-
-	var resultTodos = _.without(todos, matchedTodo);
-
-	todos = resultTodos;
-
-	console.log(todos + ' ');
-
-	res.send(matchedTodo);
 
 });
 
