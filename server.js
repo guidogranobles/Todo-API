@@ -17,12 +17,6 @@ app.get('/', function(req, res) {
 });
 
 
-//GET /todos
-/*app.get('/todos', function(req, res){
-
-	  res.json(todos);
-
-});*/
 
 //Get /todos filtered
 app.get('/todos', function(req, res) {
@@ -145,8 +139,8 @@ app.post('/users', function(req, res){
 
 	var body = _.pick(req.body, 'email', 'password');
 
-	db.todo.create(body).then(function(newUser) {
-		res.json(newUser.toJSON());
+	db.user.create(body).then(function(newUser) {
+		res.send(newUser.toPublicJSON());
 	}).catch(function(e) {
 		res.status(400).json(e);
 	});
