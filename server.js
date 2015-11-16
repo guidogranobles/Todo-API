@@ -70,10 +70,13 @@ app.get('/todos/:id', middleware.requireAuthentication, function(req, res) {
 app.post('/todos', middleware.requireAuthentication, function(req, res) {
 
 	var body = _.pick(req.body, 'description', 'completed');
-	console.log('post');
 
-	db.todo.create(body).then(function(newTodo) {
-		res.json(newTodo.toJSON());
+	db.todo.create(body).then(function(newTodo) {		
+		req.user.addTodo(newTodo).then(function(){
+			return newTodo.reload();
+		}).then(function(todo){
+			res.json(newTodo.toJSON());	
+		});
 	}).catch(function(e) {
 		res.status(400).json(e);
 	});
